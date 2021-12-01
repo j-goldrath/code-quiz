@@ -104,20 +104,29 @@ let questions = [
 
 let defaultTimeLimitInSeconds = 120; // use/change this value to set default time limit for quiz in seconds
 
-let timeRemainingInSeconds; // create a variable to hold the remaing time in seconds for an active quiz
+let timeRemainingInSeconds; // create a variable to hold the remaing time in seconds for an active quiz and set it to the default time limit 
 
+let quizStats = {
+
+}
 let totalQuestions = questions.length;
 let questionsAnswered = 0;
 let correctAnswers = 0;
 let currentQuestionIndex = 0;
 
-let qCardContainer = document.getElementById("quiz-container");
-let currentScoreEl = document.getElementById("current-score");
-let timerCardDiv = document.getElementById("timer-card");
-let scoreCardDiv = document.getElementById("score-card");
-let timerEl = document.getElementById("quiz-timer");
+// used throughout quiz to identify the container in which quiz cards are generated
+let qCardContainer = document.getElementById("quiz-container"); // create a variable that targets the quiz container element in page body
 
-// Function to convert time in seconds to minutes:seconds format (XX:XX) 
+// used later for setting/updating the current score and remaining time of quiz in progress
+let currentScoreEl = document.getElementById("current-score"); // create a variable that targets the current score element in score card on navbar
+let timerEl = document.getElementById("quiz-timer"); //create a variable that targets the time in timer card on navbar
+
+// used later for visually indicating that a point was awarded or time was deducted by changing background color
+let timerCardDiv = document.getElementById("timer-card"); // create a variable that targets the timer card div on navbar
+let scoreCardDiv = document.getElementById("score-card"); // create a variable that targets the score card div on navbar 
+
+
+// Function to convert time in seconds to minutes:seconds format (XX:XX) for use in timer element
 function convertSecondsToMinutes(seconds) {
   let minutes = Math.floor(seconds / 60).toString();
   let secondsRemaining = (seconds % 60).toString();
@@ -128,44 +137,48 @@ function convertSecondsToMinutes(seconds) {
   return minutes + ":" + secondsRemaining;
 }
 
-console.log(defaultTimeLimitInSeconds.toString().length);
-console.log(convertSecondsToMinutes(defaultTimeLimitInSeconds));
-
 // Function to completely clear quiz container div of all elements/content
 function clearQuizContainer() {
   let quizContainer = document.getElementById("quiz-container");
   quizContainer.innerHTML = "";
 }
 
+// Function to start the quiz
 function startQuiz () {
-  timeRemainingInSeconds = defaultTimeLimitInSeconds;
-  currentScoreEl.textContent = 0;
+  timeRemainingInSeconds = defaultTimeLimitInSeconds; // reset time remaining to default time limit
+  currentScoreEl.textContent = 0; // reset current score to 0
+  currentQuestionIndex = 0; // reset current question index to 0
   startTimer();
   clearQuizContainer();
   generateQuestionCard(currentQuestionIndex);
 }
 
+// Function to end the quiz
 function endQuiz() {
-  timerEl.textContent = "-:-";
-  currentScoreEl.textContent = "-";
+  timerEl.textContent = "-:-"; // blank the timer
+  currentScoreEl.textContent = "-"; // blank the current score
   clearQuizContainer();
   generateStatsCard();
 }
 
+// Function to reset quiz stats before starting/restarting the quiz
 function resetQuizStats() {
   questionsAnswered = 0;
   correctAnswers = 0;
   currentQuestionIndex = 0;
 }
 
+// Function to start and update quiz timer, also monitors time remaing and ends quiz when time runs out
 function startTimer() {
-  timerEl.textContent = convertSecondsToMinutes(timeRemainingInSeconds);
+  timerEl.textContent = convertSecondsToMinutes(timeRemainingInSeconds); // set the quiz timer to whatever the default time limit is
+  // setup an interval timer that runs every second
   let timerInterval = setInterval(function() {
-    timeRemainingInSeconds--;
-    timerEl.textContent = convertSecondsToMinutes(timeRemainingInSeconds);
+    timeRemainingInSeconds--; // decrement time remaining by 1 second
+    timerEl.textContent = convertSecondsToMinutes(timeRemainingInSeconds); // update the quiz timer to reflect the new time remaining
+    // if remaining time reaches zero or all questions have been answered, then stop timer and end quiz
     if (timeRemainingInSeconds === 0 || questionsAnswered === totalQuestions) {
-      clearInterval(timerInterval);
-      timeRemainingInSeconds = 0;
+      clearInterval(timerInterval); // clear timer interval so timer will no longer be updated
+      timeRemainingInSeconds = 0; // set time remaing to zero
       endQuiz();
     }
   }, 1000);
@@ -217,41 +230,11 @@ function generateStatsCard() {
   qCardStatsRow.classList.add("row", "justify-content-center", "gy-4"); // add class of row and justfy-content-center provided by bootstrap
   qCardBody.appendChild(qCardStatsRow); // append row of choices to question card body
   
-  generateStatsSubCard("You Answered", `${questionsAnswered}/${totalQuestions}`, "Questions", qCardStatsRow);
-  generateStatsSubCard("Final Score", correctAnswers, "Points", qCardStatsRow);
-  generateStatsSubCard("Your Rating", determineRating(), "", qCardStatsRow);
-  // // create stats section on how many questions were anwered
-  // let qCardStatsAnsweredCol = document.createElement("div"); // create div to serve as column to contain choice buttons
-  // qCardStatsAnsweredCol.classList.add("card", "col-sm-12", "col-md-4", "pt-4", "pb-3", "mx-1");
-  // let qCardStatsAnsweredLabel = document.createElement("h3");
-  // qCardStatsAnsweredLabel.textContent = "You Answered:";
-  // let qCardStatsAnsweredValue = document.createElement("h1");
-  // qCardStatsAnsweredValue.classList.add("pt-3");
-  // qCardStatsAnsweredValue.textContent = `${questionsAnswered}/${totalQuestions}`;
-  // let qCardStatsAnsweredValueText = document.createElement("h4");
-  // qCardStatsAnsweredValueText.textContent = "Questions";
-
-  // qCardStatsAnsweredCol.appendChild(qCardStatsAnsweredLabel);
-  // qCardStatsAnsweredCol.appendChild(qCardStatsAnsweredValue);
-  // qCardStatsAnsweredCol.appendChild(qCardStatsAnsweredValueText);
-  // qCardStatsRow.appendChild(qCardStatsAnsweredCol);
-
-  // // create stats section on total score
-  // let qCardStatsCorrectCol = document.createElement("div"); // create div to serve as column to contain choice buttons
-  // qCardStatsCorrectCol.classList.add("card", "col-sm-12", "col-md-4", "pt-4", "pb-3", "mx-1");
-  // let qCardStatsCorrectLabel = document.createElement("h3");
-  // qCardStatsCorrectLabel.textContent = "Final Score:";
-  // let qCardStatsCorrectValue = document.createElement("h1");
-  // qCardStatsCorrectValue.classList.add("pt-3");
-  // qCardStatsCorrectValue.textContent = correctAnswers; // create stats section on how many questions were anwered
-  // let qCardStatsCorrectValueText = document.createElement("h4");
-  // qCardStatsCorrectValueText.textContent = "Correct Answers";
-
-  // qCardStatsCorrectCol.appendChild(qCardStatsCorrectLabel);
-  // qCardStatsCorrectCol.appendChild(qCardStatsCorrectValue);
-  // qCardStatsCorrectCol.appendChild(qCardStatsCorrectValueText);
-  // qCardStatsRow.appendChild(qCardStatsCorrectCol);
-
+  // generate stats subcards to be appended to qCardStatsRow div
+  generateStatsSubCard("You Answered:", `${questionsAnswered}/${totalQuestions}`, "Questions", qCardStatsRow);
+  generateStatsSubCard("Final Score:", correctAnswers, "Points", qCardStatsRow);
+  generateStatsSubCard("Your Rating:", determineRating(), "", qCardStatsRow);
+  
    // append qCard and all children to qCard Container
   qCardContainer.appendChild(qCard); // append question card to quiz container
 }
@@ -329,7 +312,7 @@ function selectAnswer(choice) {
   }
 }
 
-// Function to play sound effect, takes id of audio element as argument
+// Function to play sound effect, takes id of desired audio element as argument
 function play(soundId) {
   var audio = document.getElementById(soundId);
   if (audio.paused) {
