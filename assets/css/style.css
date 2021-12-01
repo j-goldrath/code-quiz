@@ -1,0 +1,71 @@
+
+@font-face {
+  font-family: simpsonfont;
+  src: url("../fonts/simpsonfont.ttf");
+}
+
+body {
+  font-family: simpsonfont, sans-serif;
+}
+
+.navbar-card {
+  background-color: #ffd90f;
+}
+
+#quiz-background {
+  height: 92vh;
+  background-image: url('../images/simpsons-living-room.jpg');
+  background-size: cover;
+}
+
+.qCard {
+  background-color: rgba(255,255,255,0.88);
+}
+
+.r2b-fading {
+  -webkit-animation-duration: 0.5s;
+  -webkit-animation-name: r2b-fading;
+  animation-duration: 0.5s;
+  animation-name: r2b-fading;
+}
+
+
+@-webkit-keyframes r2b-fading {
+  from {
+      background-color: red;
+  }
+  to {
+      background-color: #ffd90f;
+  }
+}
+@keyframes r2b-fading {
+  from {
+      background-color: red;
+  }
+  to {
+      background-color: #ffd90f;
+  }
+}
+
+.g2b-fading {
+  -webkit-animation-duration: 0.5s;
+  -webkit-animation-name: g2b-fading;
+  animation-duration: 0.5s;
+  animation-name: g2b-fading;
+}
+@-webkit-keyframes g2b-fading {
+  from {
+      background-position: green;
+  }
+  to {
+      background-color: #ffd90f;
+  }
+}
+@keyframes g2b-fading {
+  from {
+      background-color: green;
+  }
+  to {
+      background-color: #ffd90f;
+  }
+}
