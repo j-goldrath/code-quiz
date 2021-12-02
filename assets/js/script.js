@@ -41,7 +41,7 @@ let questions = [
     answer: "Carl Carlson"
   },
   {
-    question: "What is the name of Bart's evil twin?",
+    question: "In Treehouse of Horror VII, what is the name of Bart's evil twin?",
     choices: ["Brett", "Hugo", "Nelson", "Wendell"],
     answer: "Hugo"
   },
@@ -97,22 +97,46 @@ let questions = [
   },
   {
     question: "What is the name of Lisa Simpson's teacher at Springfield Elementary School?",
-    choices: ["Mrs. Krabappel", "Miss Hoover", "Professor Frink", "Senior Tito Fuentes"],
+    choices: ["Mrs. Krabappel", "Miss Hoover", "Professor Frink", "Sr. Fuente"],
     answer: "Miss Hoover"
   },
+  {
+    question: "When Homer was briefly promoted to executive, what was the name of his secretary?",
+    choices: ["Stacy", "Chip", "Pat", "Karl"],
+    answer: "Karl"
+  },
+  {
+    question: "Who composed the theme music for the Simpsons?",
+    choices: ["Hanz Zimmer", "Quincy Jones", "Danny Elfman", "Randy Newman"],
+    answer: "Danny Elfman"
+  },
+  {
+    question: "What was the name of Mr. Burns's teddy bear?",
+    choices: ["Teddy", "Bobo", "Mr. Bearns", "Senior Tito Fuentes"],
+    answer: "Bobo"
+  },
+  {
+    question: "What is Homer Simpson's favorite beer?",
+    choices: ["Heineken", "Fudd Light", "Dubweiser", "Duff"],
+    answer: "Duff"
+  },
+  {
+    question: "What is the name of the Simpson family's dog?",
+    choices: ["Santa's Little Helper", "Snowball II", "Laddie", "Bob Barker"],
+    answer: "Santa's Little Helper"
+  },
+
 ];
 
 let defaultTimeLimitInSeconds = 120; // use/change this value to set default time limit for quiz in seconds
 
-let timeRemainingInSeconds; // create a variable to hold the remaing time in seconds for an active quiz and set it to the default time limit 
 
-let quizStats = {
-
-}
-let totalQuestions = questions.length;
-let questionsAnswered = 0;
-let correctAnswers = 0;
-let currentQuestionIndex = 0;
+// Active Quiz Stats
+let timeRemainingInSeconds; // declare a variable to hold the remaing time in seconds for an active quiz and set it to the default time limit
+let totalQuestions = questions.length; // set equal to number of question objects in questions array
+let questionsAnswered = 0; //set number of questions asked to zero
+let correctAnswers = 0; // set correct answers to zero
+let currentQuestionIndex = 0; // set current question index to zero
 
 // used throughout quiz to identify the container in which quiz cards are generated
 let qCardContainer = document.getElementById("quiz-container"); // create a variable that targets the quiz container element in page body
@@ -125,7 +149,6 @@ let timerEl = document.getElementById("quiz-timer"); //create a variable that ta
 let timerCardDiv = document.getElementById("timer-card"); // create a variable that targets the timer card div on navbar
 let scoreCardDiv = document.getElementById("score-card"); // create a variable that targets the score card div on navbar 
 
-
 // Function to convert time in seconds to minutes:seconds format (XX:XX) for use in timer element
 function convertSecondsToMinutes(seconds) {
   let minutes = Math.floor(seconds / 60).toString();
@@ -137,19 +160,16 @@ function convertSecondsToMinutes(seconds) {
   return minutes + ":" + secondsRemaining;
 }
 
-// Function to completely clear quiz container div of all elements/content
+// simple function to completely clear quiz container div of all elements/content
 function clearQuizContainer() {
-  let quizContainer = document.getElementById("quiz-container");
-  quizContainer.innerHTML = "";
+  qCardContainer.innerHTML = ""; // set innerHTML of quiz container to empty string
 }
 
 // Function to start the quiz
 function startQuiz () {
-  timeRemainingInSeconds = defaultTimeLimitInSeconds; // reset time remaining to default time limit
-  currentScoreEl.textContent = 0; // reset current score to 0
-  currentQuestionIndex = 0; // reset current question index to 0
-  startTimer();
+  resetQuizStats();
   clearQuizContainer();
+  startTimer();
   generateQuestionCard(currentQuestionIndex);
 }
 
@@ -163,9 +183,13 @@ function endQuiz() {
 
 // Function to reset quiz stats before starting/restarting the quiz
 function resetQuizStats() {
-  questionsAnswered = 0;
-  correctAnswers = 0;
-  currentQuestionIndex = 0;
+  timeRemainingInSeconds = defaultTimeLimitInSeconds; // reset time remaining to default time limit
+  currentScoreEl.textContent = 0; // reset current score to 0
+  currentQuestionIndex = 0; // reset current question index to 0
+  totalQuestions = questions.length; // set total questions to number of question objects in questions array
+  questionsAnswered = 0; // set number of questions answered to zero
+  correctAnswers = 0; // set number of correctly answered questions to zero
+  currentQuestionIndex = 0; // set question index to zero
 }
 
 // Function to start and update quiz timer, also monitors time remaing and ends quiz when time runs out
@@ -187,7 +211,7 @@ function startTimer() {
 // Function to create quiz question card that takes 3 arguments: question, [choices], and answer
 function generateQuestionCard(questionIndex) {
   let qCard = document.createElement("div"); // create div to serve as question card
-  qCard.classList.add("card", "text-center", "qCard", "py-3"); // add class of card and text-center provided by bootstrap
+  qCard.classList.add("card", "text-center", "qCard", "mt-4", "py-3"); // add class of card and text-center provided by bootstrap
   let qCardBody = document.createElement("div"); // create div to serve as question card body
   qCardBody.classList.add("card-body"); // add class of card-body provided by bootstrap
   qCard.appendChild(qCardBody); // append question card body to question card
@@ -216,9 +240,12 @@ function generateQuestionCard(questionIndex) {
 
 };
 
+let finalLetterGrade;
+let finalRating;
+
 function generateStatsCard() {
   let qCard = document.createElement("div"); // create div to serve as question card
-  qCard.classList.add("card", "text-center", "qCard", "py-3"); // add class of card and text-center provided by bootstrap
+  qCard.classList.add("card", "text-center", "qCard", "mt-4", "py-3"); // add class of card and text-center provided by bootstrap
   let qCardBody = document.createElement("div"); // create div to serve as question card body
   qCardBody.classList.add("card-body"); // add class of card-body provided by bootstrap
   qCard.appendChild(qCardBody); // append question card body to question card
@@ -228,23 +255,87 @@ function generateStatsCard() {
   qCardBody.appendChild(qCardResults); // append question to question card body
   let qCardStatsRow = document.createElement("div"); // create div to serve as row of choices
   qCardStatsRow.classList.add("row", "justify-content-center", "gy-4"); // add class of row and justfy-content-center provided by bootstrap
-  qCardBody.appendChild(qCardStatsRow); // append row of choices to question card body
+  qCardBody.appendChild(qCardStatsRow); // append choices row to question card body
   
   // generate stats subcards to be appended to qCardStatsRow div
   generateStatsSubCard("You Answered:", `${questionsAnswered}/${totalQuestions}`, "Questions", qCardStatsRow);
-  generateStatsSubCard("Final Score:", correctAnswers, "Points", qCardStatsRow);
-  generateStatsSubCard("Your Rating:", determineRating(), "", qCardStatsRow);
+  generateStatsSubCard("Total Score:", correctAnswers, "Points", qCardStatsRow);
+
+  calculateGrade();
+  generateStatsSubCard("Your Grade:", finalLetterGrade, finalRating, qCardStatsRow);
   
    // append qCard and all children to qCard Container
   qCardContainer.appendChild(qCard); // append question card to quiz container
 }
 
-function determineRating () {
+// Function to calculate quiz 
+function calculateGrade() {
 
+  // divide number of correct answers by total number of questions and multiply by 100 to get percentage
+  let percentageGrade = Math.round(correctAnswers / totalQuestions * 100);
+  // create variable to hold letter grade determined by if statements
+  let letterGrade;
+  let rating;
+  if (percentageGrade <= 59) {
+    letterGrade = "F";
+    rating = "You failed!";
+    playAfterDelay("tried-and-failed", 2000);
+  } else if (percentageGrade >= 60 && percentageGrade <= 62) {
+    letterGrade = "D-";
+    rating = "You barely passed!";
+    playAfterDelay("me-fail-english", 2000);
+  } else if (percentageGrade >= 63 && percentageGrade <= 66) {
+    letterGrade = "D";
+    rating = "You need to study more!"
+    playAfterDelay("proclamation-haha", 2000);
+  } else if (percentageGrade >= 67 && percentageGrade <= 69) {
+    letterGrade = "D+";
+    rating = "You can do better!"
+    playAfterDelay("feeling-stupid", 2000);
+  } else if (percentageGrade >= 70 && percentageGrade <= 72) {
+    letterGrade = "C-";
+    rating = "Room for improvement!"
+    playAfterDelay("erasers-on-pencils", 2000);
+  } else if (percentageGrade >= 73 && percentageGrade <= 76) {
+    letterGrade = "C";
+    rating = "Average"
+    playAfterDelay("elected-officials", 2000);
+  } else if (percentageGrade >= 77 && percentageGrade <= 79) {
+    letterGrade = "C+";
+    rating = "Above average"
+    
+  } else if (percentageGrade >= 80 && percentageGrade <= 82) {
+    letterGrade = "B-";
+    rating = "Not bad!"
+  } else if (percentageGrade >= 83 && percentageGrade <= 86) {
+    letterGrade = "B";
+    rating = "More than OK!"
+    playAfterDelay("okily-dokily", 2000);
+  } else if (percentageGrade >= 87 && percentageGrade <= 89) {
+    letterGrade = "B+";
+    rating = "Good job!"
+    
+  } else if (percentageGrade >= 90 && percentageGrade <= 92) {
+    letterGrade = "A-";
+    rating = "Way to go!"
+    playAfterDelay("oh-yeah", 2000);
+  } else if (percentageGrade >= 93 && percentageGrade <= 96) {
+    letterGrade = "A";
+    rating = "You did amazing!";
+    playAfterDelay("know-it-all", 2000)
+  } else if (percentageGrade >= 97 && percentageGrade <= 100) {
+    letterGrade = "A+";
+    rating = "Excellent!"
+    playAfterDelay("excellent", 2000)
+  }
+   
+  // finalLetterGrade = `${percentageGrade}% ${letterGrade}`;
+  finalLetterGrade = letterGrade;
+  finalRating = rating;
 }
 
 // Function that generates subcards within stats qCard at end of quiz
-function generateStatsSubCard(label, value, description, parentElement) {
+function generateStatsSubCard(label, value, description, parent) {
 
   // generate div with class of column to contain stats sub card
   let statsSubCardCol = document.createElement("div");
@@ -259,10 +350,15 @@ function generateStatsSubCard(label, value, description, parentElement) {
   statsSubCard.appendChild(statsSubCardBody);
   // generate h3 element to serve as stats card label and append to card body
   let statsSubCardLabel = document.createElement("h3");
+  statsSubCardLabel.classList.add("mb-4");
   statsSubCardLabel.textContent = label;
   statsSubCardBody.appendChild(statsSubCardLabel);
   // generate h1 element to serve as stats card value and append to card body
   let statsSubCardValue = document.createElement("h1");
+  if (label === "Your Grade:") {
+    statsSubCardValue.classList.add("text-danger");
+  }
+  // statsSubCardValue.classList.add("align-middle");
   statsSubCardValue.textContent = value;
   statsSubCardBody.appendChild(statsSubCardValue);
   // generate h4 element to serve as stats card description and append to card body
@@ -270,7 +366,7 @@ function generateStatsSubCard(label, value, description, parentElement) {
   statsSubCardDescription.textContent = description;
   statsSubCardBody.appendChild(statsSubCardDescription);
   // append entire statsSubCardCol and all children to parentElement passed as function argument
-  parentElement.appendChild(statsSubCardCol);
+  parent.appendChild(statsSubCardCol);
 }
 
 // This function fires anytime a correct answer is selected by user during quiz
@@ -285,9 +381,9 @@ function answeredCorrectly() {
 // This function fires anytime an incorrect answer is selected by user during quiz
 function answeredIncorrectly() {
   timeRemainingInSeconds = timeRemainingInSeconds - 5; // decrement timeRemainingInSeconds by 5 as penalty for incorrect answer
-    timerCardDiv.className = "r2b-fading"; // add class of r2b-fading to timerCardDiv to indicate that time penalty was applied
-    setTimeout(() => {timerCardDiv.className = "";}, 500); // set timeout to remove class of r2b-fading after 500ms
-    play("doh"); // play doh soundFX to alert user that they answered incorrectly
+  timerCardDiv.className = "r2b-fading"; // add class of r2b-fading to timerCardDiv to indicate that time penalty was applied
+  setTimeout(() => {timerCardDiv.className = "";}, 500); // set timeout to remove class of r2b-fading after 500ms
+  play("doh"); // play doh soundFX to alert user that they answered incorrectly
 }
 
 // Function that checks answer choice selected by user against the current question object answer key
@@ -314,11 +410,18 @@ function selectAnswer(choice) {
 
 // Function to play sound effect, takes id of desired audio element as argument
 function play(soundId) {
-  var audio = document.getElementById(soundId);
+  let audio = document.getElementById(soundId);
   if (audio.paused) {
       audio.play();
   } else {
       audio.currentTime = 0
   }
+}
+
+function playAfterDelay(soundId, delay) {
+  setTimeout(() => {
+    let audio = document.getElementById(soundId);
+    audio.play()
+  }, delay);
 }
 
