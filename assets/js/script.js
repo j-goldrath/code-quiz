@@ -538,7 +538,7 @@ function generateHighscoreCard() {
   qCardBody.appendChild(qCardStatsRow); // append choices row to question card body
   // create column div to hold list
   let qCardCol = document.createElement("div");
-  qCardCol.classList.add("col-sm-10", "col-md-6", "col-lg-4");
+  qCardCol.classList.add("col-sm-10", "col-md-6", "col-lg-4", "px-5");
   qCardStatsRow.appendChild(qCardCol);
   // create unordered list element to hold highscore list items
   let highscoreUl = document.createElement("ul");
@@ -565,10 +565,10 @@ function generateHighscoreCard() {
 function generateHighScoreEntryCard(parentEl) {
   // create column div to hold card containing other elements
   let highscoreEntryCardCol = document.createElement("div");
-  highscoreEntryCardCol.classList.add("col-sm-10", "col-md-6", "col-lg-4");
+  highscoreEntryCardCol.classList.add("col-sm-12", "col-md-4");
   // create card div to hold name entry field and submit button
   let highscoreEntryCard = document.createElement("div");
-  highscoreEntryCard.classList.add("card", "text-center", "center");
+  highscoreEntryCard.classList.add("card", "text-center", "center", "pt-2", "px-2");
   highscoreEntryCardCol.appendChild(highscoreEntryCard);
   // add h4 element as label for highscore entry card
   let highscoreEntryCardLabel = document.createElement("h4");
