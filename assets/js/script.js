@@ -231,7 +231,7 @@ function startTimer() {
     timeRemainingInSeconds--; // decrement time remaining by 1 second
     timerEl.textContent = convertSecondsToMinutes(timeRemainingInSeconds); // update the quiz timer to reflect the new time remaining
     // if remaining time reaches zero or all questions have been answered, then stop timer and end quiz
-    if (timeRemainingInSeconds === 0 || questionsAnswered === totalQuestions) {
+    if (timeRemainingInSeconds <= 0 || questionsAnswered === totalQuestions) {
       clearInterval(timerInterval); // clear timer interval so timer will no longer be updated
       timeRemainingInSeconds = 0; // set time remaing to zero
       endQuiz();
