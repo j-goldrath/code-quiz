@@ -355,27 +355,27 @@ function calculateGrade() {
   } else if (percentageGrade >= 80 && percentageGrade <= 82) {
     letterGrade = "B-";
     rating = "Not bad!"
-
+    playAfterDelay("okily-dokily", 2000);
   } else if (percentageGrade >= 83 && percentageGrade <= 86) {
     letterGrade = "B";
     rating = "More than OK!"
     playAfterDelay("okily-dokily", 2000);
   } else if (percentageGrade >= 87 && percentageGrade <= 89) {
     letterGrade = "B+";
-    rating = "Good job!"
-
-  } else if (percentageGrade >= 90 && percentageGrade <= 92) {
-    letterGrade = "A-";
     rating = "Way to go!"
     playAfterDelay("oh-yeah", 2000);
+  } else if (percentageGrade >= 90 && percentageGrade <= 92) {
+    letterGrade = "A-";
+    rating = "Great job!"
+    playAfterDelay("know-it-all", 2000);
   } else if (percentageGrade >= 93 && percentageGrade <= 96) {
     letterGrade = "A";
     rating = "You did amazing!";
-    playAfterDelay("know-it-all", 2000)
+    playAfterDelay("know-it-all", 2000);
   } else if (percentageGrade >= 97 && percentageGrade <= 100) {
     letterGrade = "A+";
     rating = "Excellent!"
-    playAfterDelay("excellent", 2000)
+    playAfterDelay("excellent", 2000);
   }
 
   // finalLetterGrade = `${percentageGrade}% ${letterGrade}`;
