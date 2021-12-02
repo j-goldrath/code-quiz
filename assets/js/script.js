@@ -77,7 +77,7 @@ let questions = [
   },
   {
     question: "Which of the following is not one of Homer Simpson's catchphrases?",
-    choices: ["Beer Me!","D'oh", "Mmmm...Donuts", "Woo-Hoo!"],
+    choices: ["Beer Me!", "D'oh", "Mmmm...Donuts", "Woo-Hoo!"],
     answer: "Beer Me!"
   },
   {
@@ -130,6 +130,32 @@ let questions = [
 
 let defaultTimeLimitInSeconds = 120; // use/change this value to set default time limit for quiz in seconds
 
+// create empty array to hold highscore objects
+let highscores = [
+  {
+    name: "El Barto",
+    grade: 69
+  },
+  {
+    name: "Lisa",
+    grade: 97
+  },
+  {
+    name: "Martin",
+    grade: 88
+  },
+  {
+    name: "Milhouse",
+    grade: 65
+  },
+  {
+    name: "Ralph",
+    grade: 60
+  }
+];
+
+// populate high score object array with entries from local storage
+
 
 // Active Quiz Stats
 let timeRemainingInSeconds; // declare a variable to hold the remaing time in seconds for an active quiz and set it to the default time limit
@@ -149,6 +175,11 @@ let timerEl = document.getElementById("quiz-timer"); //create a variable that ta
 let timerCardDiv = document.getElementById("timer-card"); // create a variable that targets the timer card div on navbar
 let scoreCardDiv = document.getElementById("score-card"); // create a variable that targets the score card div on navbar 
 
+// create variables to store final letter grade and rating
+let finalLetterGrade;
+let finalRating;
+let finalPercentageGrade;
+
 // Function to convert time in seconds to minutes:seconds format (XX:XX) for use in timer element
 function convertSecondsToMinutes(seconds) {
   let minutes = Math.floor(seconds / 60).toString();
@@ -158,20 +189,20 @@ function convertSecondsToMinutes(seconds) {
     secondsRemaining = "0" + secondsRemaining;
   }
   return minutes + ":" + secondsRemaining;
-}
+};
 
 // simple function to completely clear quiz container div of all elements/content
 function clearQuizContainer() {
   qCardContainer.innerHTML = ""; // set innerHTML of quiz container to empty string
-}
+};
 
 // Function to start the quiz
-function startQuiz () {
+function startQuiz() {
   resetQuizStats();
   clearQuizContainer();
   startTimer();
   generateQuestionCard(currentQuestionIndex);
-}
+};
 
 // Function to end the quiz
 function endQuiz() {
@@ -179,7 +210,7 @@ function endQuiz() {
   currentScoreEl.textContent = "-"; // blank the current score
   clearQuizContainer();
   generateStatsCard();
-}
+};
 
 // Function to reset quiz stats before starting/restarting the quiz
 function resetQuizStats() {
@@ -190,13 +221,13 @@ function resetQuizStats() {
   questionsAnswered = 0; // set number of questions answered to zero
   correctAnswers = 0; // set number of correctly answered questions to zero
   currentQuestionIndex = 0; // set question index to zero
-}
+};
 
 // Function to start and update quiz timer, also monitors time remaing and ends quiz when time runs out
 function startTimer() {
   timerEl.textContent = convertSecondsToMinutes(timeRemainingInSeconds); // set the quiz timer to whatever the default time limit is
   // setup an interval timer that runs every second
-  let timerInterval = setInterval(function() {
+  let timerInterval = setInterval(function () {
     timeRemainingInSeconds--; // decrement time remaining by 1 second
     timerEl.textContent = convertSecondsToMinutes(timeRemainingInSeconds); // update the quiz timer to reflect the new time remaining
     // if remaining time reaches zero or all questions have been answered, then stop timer and end quiz
@@ -206,7 +237,7 @@ function startTimer() {
       endQuiz();
     }
   }, 1000);
-}
+};
 
 // Function to create quiz question card that takes 3 arguments: question, [choices], and answer
 function generateQuestionCard(questionIndex) {
@@ -231,7 +262,7 @@ function generateQuestionCard(questionIndex) {
     qCardChoiceButton.type = "button"; // set button type to button
     qCardChoiceButton.style = "width: 90%"; // set button width to 90%
     qCardChoiceButton.innerHTML = questions[currentQuestionIndex].choices[i]; // fill choice button with choice text
-    qCardChoiceButton.setAttribute('onclick',`selectAnswer("${questions[currentQuestionIndex].choices[i]}");`); // set onclick attribute to call selectAnswer function with choice text as argument
+    qCardChoiceButton.setAttribute('onclick', `selectAnswer("${questions[currentQuestionIndex].choices[i]}");`); // set onclick attribute to call selectAnswer function with choice text as argument
     qCardChoiceCol.appendChild(qCardChoiceButton); // append choice button to column
     qCardChoicesRow.appendChild(qCardChoiceCol); // append column with button to row of choices
   };
@@ -239,9 +270,6 @@ function generateQuestionCard(questionIndex) {
   qCardContainer.appendChild(qCard); // append question card to quiz container
 
 };
-
-let finalLetterGrade;
-let finalRating;
 
 function generateStatsCard() {
   let qCard = document.createElement("div"); // create div to serve as question card
@@ -256,17 +284,25 @@ function generateStatsCard() {
   let qCardStatsRow = document.createElement("div"); // create div to serve as row of choices
   qCardStatsRow.classList.add("row", "justify-content-center", "gy-4"); // add class of row and justfy-content-center provided by bootstrap
   qCardBody.appendChild(qCardStatsRow); // append choices row to question card body
-  
+
   // generate stats subcards to be appended to qCardStatsRow div
   generateStatsSubCard("You Answered:", `${questionsAnswered}/${totalQuestions}`, "Questions", qCardStatsRow);
   generateStatsSubCard("Total Score:", correctAnswers, "Points", qCardStatsRow);
 
   calculateGrade();
   generateStatsSubCard("Your Grade:", finalLetterGrade, finalRating, qCardStatsRow);
-  
-   // append qCard and all children to qCard Container
+
+  if (checkIfHighscore(finalPercentageGrade)) {
+    generateHighScoreEntryCard(qCardStatsRow);
+  }
+
+  // append qCard and all children to qCard Container
   qCardContainer.appendChild(qCard); // append question card to quiz container
-}
+
+  // target the name input text field for highscore and set onclick function accordingly to call submitHighScore function
+  let nameEntryField = document.getElementById("highscoreNameEntryField").value;
+  highscoreNameSubmitButton.setAttribute('onclick', `addHighScore(document.getElementById("highscoreNameEntryField").value, ${finalPercentageGrade});`);
+};
 
 // Function to calculate quiz 
 function calculateGrade() {
@@ -303,7 +339,7 @@ function calculateGrade() {
   } else if (percentageGrade >= 77 && percentageGrade <= 79) {
     letterGrade = "C+";
     rating = "Above average"
-    
+
   } else if (percentageGrade >= 80 && percentageGrade <= 82) {
     letterGrade = "B-";
     rating = "Not bad!"
@@ -314,7 +350,7 @@ function calculateGrade() {
   } else if (percentageGrade >= 87 && percentageGrade <= 89) {
     letterGrade = "B+";
     rating = "Good job!"
-    
+
   } else if (percentageGrade >= 90 && percentageGrade <= 92) {
     letterGrade = "A-";
     rating = "Way to go!"
@@ -328,11 +364,12 @@ function calculateGrade() {
     rating = "Excellent!"
     playAfterDelay("excellent", 2000)
   }
-   
+
   // finalLetterGrade = `${percentageGrade}% ${letterGrade}`;
   finalLetterGrade = letterGrade;
   finalRating = rating;
-}
+  finalPercentageGrade = percentageGrade;
+};
 
 // Function that generates subcards within stats qCard at end of quiz
 function generateStatsSubCard(label, value, description, parent) {
@@ -367,24 +404,24 @@ function generateStatsSubCard(label, value, description, parent) {
   statsSubCardBody.appendChild(statsSubCardDescription);
   // append entire statsSubCardCol and all children to parentElement passed as function argument
   parent.appendChild(statsSubCardCol);
-}
+};
 
 // This function fires anytime a correct answer is selected by user during quiz
 function answeredCorrectly() {
   correctAnswers++; // increment correctAnsers by 1
   currentScoreEl.textContent = correctAnswers; // update current score element text content in navbar, reflecting that point was scored
   scoreCardDiv.className = "g2b-fading"; // add class of g2b-fading to scoreCardDiv to indicate that additional point was scored
-  setTimeout(() => {scoreCardDiv.className = "";}, 500); // set timeout to remove class of g2b-fading after 500ms
+  setTimeout(() => { scoreCardDiv.className = ""; }, 500); // set timeout to remove class of g2b-fading after 500ms
   play("woohoo"); // play woohoo soundFX to alert user that they answered correctly
-}
+};
 
 // This function fires anytime an incorrect answer is selected by user during quiz
 function answeredIncorrectly() {
   timeRemainingInSeconds = timeRemainingInSeconds - 5; // decrement timeRemainingInSeconds by 5 as penalty for incorrect answer
   timerCardDiv.className = "r2b-fading"; // add class of r2b-fading to timerCardDiv to indicate that time penalty was applied
-  setTimeout(() => {timerCardDiv.className = "";}, 500); // set timeout to remove class of r2b-fading after 500ms
+  setTimeout(() => { timerCardDiv.className = ""; }, 500); // set timeout to remove class of r2b-fading after 500ms
   play("doh"); // play doh soundFX to alert user that they answered incorrectly
-}
+};
 
 // Function that checks answer choice selected by user against the current question object answer key
 function selectAnswer(choice) {
@@ -406,22 +443,141 @@ function selectAnswer(choice) {
   } else {
     generateQuestionCard(currentQuestionIndex); // generate new question card based on currentQuestionIndex which was just incremented by 1
   }
-}
+};
 
 // Function to play sound effect, takes id of desired audio element as argument
 function play(soundId) {
   let audio = document.getElementById(soundId);
   if (audio.paused) {
-      audio.play();
+    audio.play();
   } else {
-      audio.currentTime = 0
+    audio.currentTime = 0
   }
-}
+};
 
 function playAfterDelay(soundId, delay) {
   setTimeout(() => {
     let audio = document.getElementById(soundId);
     audio.play()
   }, delay);
-}
+};
 
+function checkIfHighscore(score) {
+  let isHighscore = false;
+  for (var i = 0; i < highscores.length; i++) {
+    /////////////
+    console.log(score);
+    if (score > highscores[i].grade) {
+      isHighscore = true;
+    }
+    console.log(isHighscore);
+  }
+  return isHighscore;
+};
+
+// fucntion to add players name and score to top 5 highscores list
+function addHighScore(playerName, playerScore) {
+  let sortedArray;
+  // if there are already 5 highscores then remove lowest score before proceeding
+  if (highscores.length === 5) {
+    // sort highscores array in ascending order by score
+    sortedArray = highscores.sort(dynamicSort("grade"));
+    // remove first element in sortedArray, which is the lowest score
+    sortedArray.shift();
+  }
+
+  // add new highscore to sortedArray
+  sortedArray.push({ name: playerName, grade: playerScore });
+  // re-sort updated array in descending order by score
+  sortedArray.sort(dynamicSort("-grade"));
+  highscores = sortedArray; // overwrite gloabal highscores array with updated sorted array
+  generateHighscoreCard();
+};
+
+// function to help sort array of objects by specific key/value of each object in array
+function dynamicSort(property) {
+  var sortOrder = 1;
+  if (property[0] === "-") {
+    sortOrder = -1;
+    property = property.substr(1);
+  }
+  return function (a, b) {
+    /* next line works with strings and numbers, 
+     * and you may want to customize it to your needs
+     */
+    var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+    return result * sortOrder;
+  }
+};
+
+function generateHighscoreCard() {
+  let qCard = document.createElement("div"); // create div to serve as question card
+  qCard.classList.add("card", "text-center", "qCard", "mt-4", "py-3"); // add class of card and text-center provided by bootstrap
+  let qCardBody = document.createElement("div"); // create div to serve as question card body
+  qCardBody.classList.add("card-body"); // add class of card-body provided by bootstrap
+  qCard.appendChild(qCardBody); // append question card body to question card
+  let qCardResults = document.createElement("h2"); // create h2 element to serve as question
+  qCardResults.classList.add("card-title", "py-5"); // add class of card-title provided by bootstrap
+  qCardResults.textContent = "High Scores:"; // fill h2 element with question text
+  qCardBody.appendChild(qCardResults); // append question to question card body
+  let qCardStatsRow = document.createElement("div"); // create div to serve as row of choices
+  qCardStatsRow.classList.add("row", "justify-content-center", "gy-4"); // add class of row and justfy-content-center provided by bootstrap
+  qCardBody.appendChild(qCardStatsRow); // append choices row to question card body
+  // create column div to hold list
+  let qCardCol = document.createElement("div");
+  qCardCol.classList.add("col-sm-10", "col-md-6", "col-lg-4");
+  qCardStatsRow.appendChild(qCardCol);
+  // create unordered list element to hold highscore list items
+  let highscoreUl = document.createElement("ul");
+  highscoreUl.classList.add("list-group");
+  qCardCol.appendChild(highscoreUl);
+  // loop through highscores array and create list item for each highscore
+  for (var i = 0; i < highscores.length; i++) {
+    let highscoreLi = document.createElement("li");
+    highscoreLi.classList.add("list-group-item");
+    highscoreLi.textContent = highscores[i].name + ": " + highscores[i].grade;
+    highscoreUl.appendChild(highscoreLi);
+  }
+  // add button to play quiz again
+  let playAgainButton = document.createElement("button");
+  playAgainButton.classList.add("btn", "btn-primary", "btn-lg", "mt-5");
+  playAgainButton.textContent = "Play Again";
+  playAgainButton.setAttribute('onclick', 'startQuiz();');
+  qCardBody.appendChild(playAgainButton);
+  clearQuizContainer();
+  // append qCard and all children to qCard Container
+  qCardContainer.appendChild(qCard); // append question card to quiz container
+};
+
+function generateHighScoreEntryCard(parentEl) {
+  // create column div to hold card containing other elements
+  let highscoreEntryCardCol = document.createElement("div");
+  highscoreEntryCardCol.classList.add("col-sm-10", "col-md-6", "col-lg-4");
+  // create card div to hold name entry field and submit button
+  let highscoreEntryCard = document.createElement("div");
+  highscoreEntryCard.classList.add("card", "text-center");
+  highscoreEntryCardCol.appendChild(highscoreEntryCard);
+  // add h4 element as label for highscore entry card
+  let highscoreEntryCardLabel = document.createElement("h4");
+  highscoreEntryCardLabel.classList.add("py-2");
+  highscoreEntryCardLabel.textContent = "New High Score!";
+  highscoreEntryCard.appendChild(highscoreEntryCardLabel);
+  // create text entry field for user to enter name
+  let highscoreNameEntryField = document.createElement("input");
+  highscoreNameEntryField.classList.add("form-control", "form-control-lg", "mb-3");
+  highscoreNameEntryField.setAttribute("type", "text");
+  highscoreNameEntryField.setAttribute("placeholder", "Enter Name");
+  highscoreNameEntryField.setAttribute("id", "highscoreNameEntryField");
+  highscoreEntryCard.appendChild(highscoreNameEntryField);
+  // create button to submit name
+  let highscoreNameSubmitButton = document.createElement("button");
+  highscoreNameSubmitButton.classList.add("btn", "btn-primary", "btn-lg", "mb-3");
+  highscoreNameSubmitButton.setAttribute("type", "button");
+  highscoreNameSubmitButton.setAttribute("id", "highscoreNameSubmitButton");
+  highscoreNameSubmitButton.textContent = "Submit";
+  highscoreEntryCard.appendChild(highscoreNameSubmitButton);
+
+  // append highscore entry card column div, plus all children, to the end of parent div passed as argument
+  parentEl.appendChild(highscoreEntryCardCol);
+
+};
