@@ -294,13 +294,25 @@ function generateStatsCard() {
 
   if (checkIfHighscore(finalPercentageGrade)) {
     generateHighScoreEntryCard(qCardStatsRow);
+  } else {
+    let viewHighScoresButtonCol = document.createElement("div");
+    viewHighScoresButtonCol.classList.add("col-sm-8", "col-md-6", "col-lg-4");
+    //
+    let viewHighScoresButton = document.createElement("button"); // create button to serve as choice button
+    viewHighScoresButton.classList.add("btn", "btn-primary", "btn-lg", "btn-block"); // add class of btn, btn-primary, btn-lg, and btn-block provided by bootstrap
+    viewHighScoresButton.type = "button"; // set button type to button
+    viewHighScoresButton.style = "width: 90%"; // set button width to 90%
+    viewHighScoresButton.textContent = "View High Scores"; // fill choice button with choice text
+    viewHighScoresButton.setAttribute('onclick', `generateHighscoreCard();`); // set onclick attribute to call selectAnswer function with choice text as argument
+    viewHighScoresButtonCol.appendChild(viewHighScoresButton); // append choice button to column
+    qCardStatsRow.appendChild(viewHighScoresButtonCol); // append choice button to column
   }
 
   // append qCard and all children to qCard Container
   qCardContainer.appendChild(qCard); // append question card to quiz container
 
   // target the name input text field for highscore and set onclick function accordingly to call submitHighScore function
-  let nameEntryField = document.getElementById("highscoreNameEntryField").value;
+  //let nameEntryField = document.getElementById("highscoreNameEntryField").value;
   highscoreNameSubmitButton.setAttribute('onclick', `addHighScore(document.getElementById("highscoreNameEntryField").value, ${finalPercentageGrade});`);
 };
 
@@ -339,10 +351,11 @@ function calculateGrade() {
   } else if (percentageGrade >= 77 && percentageGrade <= 79) {
     letterGrade = "C+";
     rating = "Above average"
-
+    playAfterDelay("erasers-on-pencils", 2000);
   } else if (percentageGrade >= 80 && percentageGrade <= 82) {
     letterGrade = "B-";
     rating = "Not bad!"
+
   } else if (percentageGrade >= 83 && percentageGrade <= 86) {
     letterGrade = "B";
     rating = "More than OK!"
@@ -535,7 +548,7 @@ function generateHighscoreCard() {
   for (var i = 0; i < highscores.length; i++) {
     let highscoreLi = document.createElement("li");
     highscoreLi.classList.add("list-group-item");
-    highscoreLi.textContent = highscores[i].name + ": " + highscores[i].grade;
+    highscoreLi.textContent = highscores[i].name + ":  " + highscores[i].grade;
     highscoreUl.appendChild(highscoreLi);
   }
   // add button to play quiz again
