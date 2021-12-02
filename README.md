@@ -10,4 +10,3 @@ This is a simple multiple choice style quiz game intended to test a user's knowl
 
 ## Future Improvements
 - Make the quiz randomly shuffle the order of questions and/or answers to make retaking the quiz more challenging and less repetitive
-- 
