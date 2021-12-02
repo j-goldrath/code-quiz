@@ -69,3 +69,7 @@ body {
       background-color: #ffd90f;
   }
 }
+
+input {
+  text-align: center;
+}

@@ -146,11 +146,11 @@ let highscores = [
   },
   {
     name: "Milhouse",
-    grade: 65
+    grade: 64
   },
   {
     name: "Ralph",
-    grade: 60
+    grade: 50
   }
 ];
 
@@ -568,7 +568,7 @@ function generateHighScoreEntryCard(parentEl) {
   highscoreEntryCardCol.classList.add("col-sm-10", "col-md-6", "col-lg-4");
   // create card div to hold name entry field and submit button
   let highscoreEntryCard = document.createElement("div");
-  highscoreEntryCard.classList.add("card", "text-center");
+  highscoreEntryCard.classList.add("card", "text-center", "center");
   highscoreEntryCardCol.appendChild(highscoreEntryCard);
   // add h4 element as label for highscore entry card
   let highscoreEntryCardLabel = document.createElement("h4");
