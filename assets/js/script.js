@@ -133,16 +133,16 @@ let defaultTimeLimitInSeconds = 120; // use/change this value to set default tim
 // create empty array to hold highscore objects
 let highscores = [
   {
-    name: "El Barto",
-    grade: 69
-  },
-  {
     name: "Lisa",
     grade: 97
   },
   {
     name: "Martin",
     grade: 88
+  },
+  {
+    name: "El Barto",
+    grade: 69
   },
   {
     name: "Milhouse",
